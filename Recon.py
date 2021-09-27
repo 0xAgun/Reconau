@@ -59,7 +59,7 @@ def shuffledns(url):
 		file2.close() 
 
 def sorting_urls():
-	os.system('cat new.txt | sort --unique | tee final.txt')
+	os.system('cat all.txt | sort --unique | tee final.txt')
 	print("Done Sorting")
 
 if __name__ == "__main__":
