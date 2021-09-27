@@ -1,65 +1,74 @@
-import sys
 import os
-import time
-
-banner = '''
+import sys
 
 
-█████████████████████████████████████████████
-█▄─▄▄▀█▄─▄▄─█─▄▄▄─█─▄▄─█▄─▀█▄─▄██▀▄─██▄─██─▄█
-██─▄─▄██─▄█▀█─███▀█─██─██─█▄▀─███─▀─███─██─██
-▀▄▄▀▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▀▄▄▄▀▀▄▄▀▄▄▀▄▄▀▀▄▄▄▄▀▀
+resolvers = 'here the path of resolvers'
+subdomain_wordlist = 'subdomain brute wordlist'
+root_domain = sys.argv[1]
+making_dir = os.system(f'mkdir {root_domain}')
 
-					by 0〤闩ㄩ𝓝
+def passive_tools(url):
+    os.system(f'subfinder -d {url} | tee {url}/subfinder{url}.txt')
+    os.system(f'amass enum -d {url} -o {url}/amass_{url}.txt')
+    os.system(f'assetfinder -subs-only {url} | tee {url}/asset_{url}.txt')
+    os.system(f'findomain -t {url} -o')
 
-'''
-for char in banner:
-	sys.stdout.write(char)
-	sys.stdout.flush()
-	time.sleep(0.01)
-pass
+def active_tools(url):
+    os.system(f'shuffledns -d {url} -w {subdomain_wordlist} -r {resolvers} | tee {url}/shuffle_{url}.txt')
+    os.system(f'$ aiodnsbrute -w {subdomain_wordlist} -vv -t 1024 {url} | tee {url}/aiodns_{url}.txt')
+    
 
-site = input("Enter your site: ")
-
-def recon(url):
-	os.system('assetfinder '+url+'| tee '+url+'_assetfin.txt')
-	os.system('subfinder -d '+url+'| tee '+url+'_subfin.txt')
-	os.system('python3 sublist3r.py -v -d '+url+' -o '+url+'_sublister.txt')
-
-
-
-def assetfinder():
-	with open(site+'_assetfin.txt','r') as file1:
-		with open('new.txt', 'w') as file2:
+def assetfinder(url):
+	with open(f'{url}/asset_{url}.txt','r') as file1:
+		with open('all.txt', 'w') as file2:
 			l = file1.readlines()
 			for x in l:
 				v = file2.write(x)
-		file2.close()
+		file2.close()    
 
-
-
-def subfinder():
-	with open(site+'_subfin.txt','r') as file1:
-		with open('new.txt', 'a') as file2:
+def amass(url):
+	with open(f'{url}/amass_{url}.txt','r') as file1:
+		with open('all.txt', 'a') as file2:
 			l = file1.readlines()
 			for x in l:
 				v = file2.write(x)
-		file2.close()
+		file2.close() 
 
-
-def sublister():
-	with open(site+'_subfin.txt','r') as file1:
-		with open('new.txt', 'a') as file2:
+def subfinder(url):
+	with open(f'{url}/subfinder{url}.txt','r') as file1:
+		with open('all.txt', 'a') as file2:
 			l = file1.readlines()
 			for x in l:
 				v = file2.write(x)
-			file2.close()
+		file2.close() 
+
+def findomain(url):
+	with open(f'{url}.txt','r') as file1:
+		with open('all.txt', 'a') as file2:
+			l = file1.readlines()
+			for x in l:
+				v = file2.write(x)
+		file2.close() 
+
+def shuffledns(url):
+	with open(f'{url}/shuffle_{url}.txt','r') as file1:
+		with open('all.txt', 'a') as file2:
+			l = file1.readlines()
+			for x in l:
+				v = file2.write(x)
+		file2.close() 
+
+def sorting_urls():
+	os.system('cat new.txt | sort --unique | tee final.txt')
+	print("Done Sorting")
 
 if __name__ == "__main__":
-	
-	recon(site)
-	assetfinder()
-	subfinder()
-	sublister()
+    passive_tools(root_domain)
+    active_tools(root_domain)
+    findomain(root_domain)
+    subfinder(root_domain)
+    amass(root_domain)
+    assetfinder(root_domain)
+    shuffledns(root_domain)
+    sorting_urls()
 
-	print("Done Subdomain enumeration")
