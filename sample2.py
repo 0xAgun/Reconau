@@ -35,12 +35,12 @@ def subtake():
 def live_check(url):
 	os.system("python3 test.py")
 	os.system(f'massdns -r {resolvers} -t A -o S -w {url}_massdns_results.txt merge.txt')
-	os.system(f"cat {url}_massdns_results.txt | sed 's/A.*// ; s/CN.*// ; s/\..$//' | tee sortedmass.txt")
+	os.system(f"cat {url}_massdns_results.txt | sed 's/A.*// ; s/CN.*// ; s/\..$//' | tee active_massdns.txt")
 
 
 def aditional():
-	os.system("naabu -list sortedmass.txt | tee open_port.txt")
-	os.system("cf-check -d sortedmass.txt | tee cloudflare.txt")
+	os.system("naabu -list active_massdns.txt | tee open_port.txt")
+	os.system("cf-check -d active_massdns.txt | tee cloudflare.txt")
 
 def assetfinder(url):
 	with open(f'{url}/asset_{url}.txt','r') as file1:
@@ -78,6 +78,11 @@ def sorting_urls():
 	os.system('cat all.txt | sort --unique | tee final.txt')
 	print("Done Sorting")
 
+def dlt():
+	os.system('rm -rf all.txt')
+	os.system('rm -rf http.txt')
+	os.system('rm -rf https.txt')
+	os.system(f'{root_domain}_massdns_results.txt')
 
 if __name__ == "__main__":
 	passive_tools(root_domain)
@@ -90,4 +95,6 @@ if __name__ == "__main__":
 	subtake()
 	live_check(root_domain)
 	aditional()
+	dlt()
 
+	
